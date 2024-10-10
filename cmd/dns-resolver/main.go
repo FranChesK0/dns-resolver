@@ -6,11 +6,19 @@ import (
 	"os"
 
 	"github.com/FranChesK0/dns-resolver/internal/client"
-	"github.com/FranChesK0/dns-resolver/internal/config"
 	"github.com/FranChesK0/dns-resolver/internal/packet"
+	"github.com/spf13/cobra"
 )
 
-var cfg *config.Config = config.NewConfig()
+var (
+	NameServer string
+	rootCmd    = &cobra.Command{
+		Use:   "dns-resolver <domain> [<domain> ...]",
+		Short: "",
+		Long:  "",
+		Run:   run,
+	}
+)
 
 type DNSPacket struct {
 	header      *packet.Header
@@ -21,19 +29,30 @@ type DNSPacket struct {
 }
 
 func main() {
-	domains := os.Args[1:]
-	if len(domains) < 1 {
-		fmt.Println("Usage: ./dns-resolver <domain> [<domain> ...]")
-		os.Exit(0)
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
+}
 
-	for _, domain := range domains {
+func init() {
+	rootCmd.Flags().StringP("name-server", "s", "77.240.157.30", "Choose your own name server for resolving.")
+}
+
+func run(cmd *cobra.Command, args []string) {
+	var err error
+	NameServer, err = cmd.Flags().GetString("name-server")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	for _, domain := range args {
 		fmt.Println(resolve(domain, packet.TYPE_A))
 	}
 }
 
 func resolve(domainName string, questionType uint16) string {
-	nameServer := cfg.NameServer
+	nameServer := NameServer
 	for {
 		fmt.Printf("querying %s for %s\n", nameServer, domainName)
 		dnsResponse := sendQuery(nameServer, domainName, questionType)
