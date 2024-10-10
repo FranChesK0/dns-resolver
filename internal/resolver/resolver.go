@@ -3,6 +3,7 @@ package resolver
 import (
 	"fmt"
 
+	"github.com/FranChesK0/dns-resolver/internal/cli"
 	"github.com/FranChesK0/dns-resolver/internal/client"
 	"github.com/FranChesK0/dns-resolver/internal/packet"
 )
@@ -18,11 +19,12 @@ func NewResolver(nameServer string) *Resolver {
 func (r *Resolver) Resolve(domainName string, questionType uint16) string {
 	nameServer := r.nameServer
 	for {
-		fmt.Printf("querying %s for %s\n", nameServer, domainName)
+		fmt.Println(cli.QueryingMessage(nameServer, domainName))
 		dnsResponse := sendQuery(nameServer, domainName, questionType)
 		dnsPacket := packet.NewDNSPacket(dnsResponse)
 
 		if ip := getAnswer(dnsPacket.Answers); ip != "" {
+			fmt.Println(cli.ResolvedMessage(domainName, ip))
 			return ip
 		}
 		if nsIP := getNameServerIP(dnsPacket.Additionals); nsIP != "" {

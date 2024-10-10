@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/FranChesK0/dns-resolver/internal/cli"
 	"github.com/FranChesK0/dns-resolver/internal/packet"
 	"github.com/FranChesK0/dns-resolver/internal/resolver"
 	"github.com/spf13/cobra"
@@ -11,8 +12,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "dns-resolver <domain> [<domain> ...]",
-	Short: "",
-	Long:  "",
+	Short: cli.BoldText.Render("Simple DNS Resolver"),
 	Run:   run,
 }
 
@@ -44,6 +44,6 @@ func run(cmd *cobra.Command, args []string) {
 	}
 	rsv := resolver.NewResolver(nameServer)
 	for _, domain := range args {
-		fmt.Println(rsv.Resolve(domain, packet.TYPE_A))
+		rsv.Resolve(domain, packet.TYPE_A)
 	}
 }
