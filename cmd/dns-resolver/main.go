@@ -31,7 +31,7 @@ func main() {
 }
 
 func resolve(domainName string, questionType uint16) string {
-	nameServer := "8.8.8.8"
+	nameServer := "77.240.157.30"
 	for {
 		fmt.Printf("querying %s for %s\n", nameServer, domainName)
 		dnsResponse := sendQuery(nameServer, domainName, questionType)
@@ -80,11 +80,11 @@ func getDNSPacketFromResponse(dnsResponse []byte) *DNSPacket {
 	for range header.AnCount {
 		answers = append(answers, record.ParseRecord(reader))
 	}
-	for range header.ArCount {
-		additionals = append(additionals, record.ParseRecord(reader))
-	}
 	for range header.NsCount {
 		authorities = append(authorities, record.ParseRecord(reader))
+	}
+	for range header.ArCount {
+		additionals = append(additionals, record.ParseRecord(reader))
 	}
 
 	return &DNSPacket{
