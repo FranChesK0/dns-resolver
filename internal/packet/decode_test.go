@@ -1,4 +1,4 @@
-package decode
+package packet
 
 import (
 	"bytes"
@@ -18,9 +18,4 @@ func TestReadDomainNamesFromQuestion(t *testing.T) {
 
 	assert.NotEmpty(t, dnsName)
 	assert.Equal(t, "test.domain.name", dnsName)
-}
-
-func skipResponseTill(t *testing.T, reader *bytes.Reader, response []byte, startingPoint int64) {
-	t.Helper()
-	reader.ReadAt(response, startingPoint)
 }

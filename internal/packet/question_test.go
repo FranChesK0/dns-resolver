@@ -1,4 +1,4 @@
-package query
+package packet
 
 import (
 	"bytes"
@@ -36,9 +36,4 @@ func TestCreateQuestionFromResponse(t *testing.T) {
 		QType:  TYPE_A,
 		QClass: CLASS_IN,
 	}, question)
-}
-
-func skipResponseTill(t *testing.T, reader *bytes.Reader, response []byte, startingPoint int64) {
-	t.Helper()
-	reader.ReadAt(response, startingPoint)
 }

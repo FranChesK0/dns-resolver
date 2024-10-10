@@ -1,10 +1,8 @@
-package query
+package packet
 
 import (
 	"bytes"
 	"encoding/binary"
-
-	"github.com/FranChesK0/dns-resolver/internal/decode"
 )
 
 const (
@@ -37,7 +35,7 @@ func (q *Question) ToBytes() []byte {
 
 func ParseQuestion(reader *bytes.Reader) *Question {
 	var question Question
-	question.QName = []byte(decode.DecodeName(reader))
+	question.QName = []byte(DecodeName(reader))
 	binary.Read(reader, binary.BigEndian, &question.QType)
 	binary.Read(reader, binary.BigEndian, &question.QClass)
 	return &question

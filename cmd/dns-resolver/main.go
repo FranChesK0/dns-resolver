@@ -6,16 +6,15 @@ import (
 	"os"
 
 	"github.com/FranChesK0/dns-resolver/internal/client"
-	"github.com/FranChesK0/dns-resolver/internal/query"
-	"github.com/FranChesK0/dns-resolver/internal/record"
+	"github.com/FranChesK0/dns-resolver/internal/packet"
 )
 
 type DNSPacket struct {
-	header      *query.Header
-	questions   []*query.Question
-	answers     []*record.Record
-	additionals []*record.Record
-	authorities []*record.Record
+	header      *packet.Header
+	questions   []*packet.Question
+	answers     []*packet.Record
+	additionals []*packet.Record
+	authorities []*packet.Record
 }
 
 func main() {
@@ -26,7 +25,7 @@ func main() {
 	}
 
 	for _, domain := range domains {
-		fmt.Println(resolve(domain, query.TYPE_A))
+		fmt.Println(resolve(domain, packet.TYPE_A))
 	}
 }
 
@@ -45,15 +44,15 @@ func resolve(domainName string, questionType uint16) string {
 			continue
 		}
 		if nsDomain := getNameServer(dnsPacket.authorities); nsDomain != "" {
-			nameServer = resolve(nsDomain, query.TYPE_A)
+			nameServer = resolve(nsDomain, packet.TYPE_A)
 		}
 	}
 }
 
 func sendQuery(nameServer string, domainName string, questionType uint16) []byte {
-	q := query.NewQuery(
-		query.NewHeader(22, 0, 1, 0, 0, 0),
-		query.NewQuestion(domainName, questionType, query.CLASS_IN),
+	q := packet.NewQuery(
+		packet.NewHeader(22, 0, 1, 0, 0, 0),
+		packet.NewQuestion(domainName, questionType, packet.CLASS_IN),
 	)
 	c := client.NewClient(nameServer, 53)
 	return c.SendQuery(q)
@@ -61,30 +60,30 @@ func sendQuery(nameServer string, domainName string, questionType uint16) []byte
 
 func getDNSPacketFromResponse(dnsResponse []byte) *DNSPacket {
 	var (
-		header      *query.Header
-		questions   []*query.Question
-		answers     []*record.Record
-		additionals []*record.Record
-		authorities []*record.Record
+		header      *packet.Header
+		questions   []*packet.Question
+		answers     []*packet.Record
+		additionals []*packet.Record
+		authorities []*packet.Record
 	)
 
 	reader := bytes.NewReader(dnsResponse)
-	header, err := query.ParseHeader(reader)
+	header, err := packet.ParseHeader(reader)
 	if err != nil {
 		fmt.Printf("unable to parse the response header: %v\n", err)
 		os.Exit(-1)
 	}
 	for range header.QdCount {
-		questions = append(questions, query.ParseQuestion(reader))
+		questions = append(questions, packet.ParseQuestion(reader))
 	}
 	for range header.AnCount {
-		answers = append(answers, record.ParseRecord(reader))
+		answers = append(answers, packet.ParseRecord(reader))
 	}
 	for range header.NsCount {
-		authorities = append(authorities, record.ParseRecord(reader))
+		authorities = append(authorities, packet.ParseRecord(reader))
 	}
 	for range header.ArCount {
-		additionals = append(additionals, record.ParseRecord(reader))
+		additionals = append(additionals, packet.ParseRecord(reader))
 	}
 
 	return &DNSPacket{
@@ -96,21 +95,21 @@ func getDNSPacketFromResponse(dnsResponse []byte) *DNSPacket {
 	}
 }
 
-func getAnswer(answers []*record.Record) string {
+func getAnswer(answers []*packet.Record) string {
 	return getRecord(answers)
 }
 
-func getNameServerIP(additionals []*record.Record) string {
+func getNameServerIP(additionals []*packet.Record) string {
 	return getRecord(additionals)
 }
 
-func getNameServer(authorities []*record.Record) string {
+func getNameServer(authorities []*packet.Record) string {
 	return getRecord(authorities)
 }
 
-func getRecord(records []*record.Record) string {
+func getRecord(records []*packet.Record) string {
 	for _, record := range records {
-		if record.Type == query.TYPE_A || record.Type == query.TYPE_NS {
+		if record.Type == packet.TYPE_A || record.Type == packet.TYPE_NS {
 			return record.RData
 		}
 	}

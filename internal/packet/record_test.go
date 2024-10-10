@@ -1,11 +1,10 @@
-package record
+package packet
 
 import (
 	"bytes"
 	"encoding/hex"
 	"testing"
 
-	"github.com/FranChesK0/dns-resolver/internal/query"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,8 +17,8 @@ func TestCreateRecordFromResponse(t *testing.T) {
 	record := ParseRecord(reader)
 
 	assert.NotEmpty(t, record)
-	assert.Equal(t, query.TYPE_A, record.Type)
-	assert.Equal(t, query.CLASS_IN, record.Class)
+	assert.Equal(t, TYPE_A, record.Type)
+	assert.Equal(t, CLASS_IN, record.Class)
 	assert.Greater(t, record.TTL, uint32(0))
 	assert.Greater(t, record.RdLength, uint16(0))
 	assert.Equal(t, "8.8.8.8", record.RData)
@@ -27,14 +26,9 @@ func TestCreateRecordFromResponse(t *testing.T) {
 	record = ParseRecord(reader)
 
 	assert.NotEmpty(t, record)
-	assert.Equal(t, query.TYPE_A, record.Type)
-	assert.Equal(t, query.CLASS_IN, record.Class)
+	assert.Equal(t, TYPE_A, record.Type)
+	assert.Equal(t, CLASS_IN, record.Class)
 	assert.Greater(t, record.TTL, uint32(0))
 	assert.Greater(t, record.RdLength, uint16(0))
 	assert.Equal(t, "8.8.4.4", record.RData)
-}
-
-func skipResponseTill(t *testing.T, reader *bytes.Reader, response []byte, startingPoint int64) {
-	t.Helper()
-	reader.ReadAt(response, startingPoint)
 }
