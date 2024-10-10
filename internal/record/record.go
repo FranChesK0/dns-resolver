@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 
+	"github.com/FranChesK0/dns-resolver/internal/decode"
 	"github.com/FranChesK0/dns-resolver/internal/query"
 )
 
@@ -19,7 +20,7 @@ type Record struct {
 
 func ParseRecord(reader *bytes.Reader) *Record {
 	var record Record
-	record.Name = []byte(DecodeName(reader))
+	record.Name = []byte(decode.DecodeName(reader))
 	binary.Read(reader, binary.BigEndian, &record.Type)
 	binary.Read(reader, binary.BigEndian, &record.Class)
 	binary.Read(reader, binary.BigEndian, &record.TTL)
@@ -28,7 +29,7 @@ func ParseRecord(reader *bytes.Reader) *Record {
 	case query.TYPE_A:
 		record.RData = readIP(reader, record.RdLength)
 	case query.TYPE_NS:
-		record.RData = DecodeName(reader)
+		record.RData = decode.DecodeName(reader)
 	default:
 		record.RData = string(readData(reader, record.RdLength))
 	}
