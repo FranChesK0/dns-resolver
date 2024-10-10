@@ -8,6 +8,7 @@ import (
 
 var (
 	BoldText      = lipgloss.NewStyle().Bold(true).Background(lipgloss.Color("63"))
+	ErrText       = lipgloss.NewStyle().Bold(true).Background(lipgloss.Color("9"))
 	resolvedStyle = lipgloss.NewStyle().BorderStyle(lipgloss.NormalBorder()).BorderForeground(lipgloss.Color("63"))
 )
 

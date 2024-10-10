@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+
+	"github.com/FranChesK0/dns-resolver/internal/cli"
 )
 
 type DNSPacket struct {
@@ -26,7 +28,7 @@ func NewDNSPacket(dnsResponse []byte) *DNSPacket {
 	reader := bytes.NewReader(dnsResponse)
 	header, err := ParseHeader(reader)
 	if err != nil {
-		fmt.Printf("unable to parse the response header: %v\n", err)
+		fmt.Println(cli.ErrText.Render(fmt.Sprintf("Unable to parse the response header: %v", err)))
 		os.Exit(-1)
 	}
 	for range header.QdCount {
