@@ -37,8 +37,3 @@ func TestCreateQuestionFromResponse(t *testing.T) {
 		QClass: CLASS_IN,
 	}, question)
 }
-
-func skipResponseTill(t *testing.T, reader *bytes.Reader, response []byte, startingPoint int64) {
-	t.Helper()
-	reader.ReadAt(response, startingPoint)
-}

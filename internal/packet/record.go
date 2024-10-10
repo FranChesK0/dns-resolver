@@ -1,4 +1,4 @@
-package record
+package packet
 
 import (
 	"bytes"
@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/FranChesK0/dns-resolver/internal/decode"
-	"github.com/FranChesK0/dns-resolver/internal/query"
 )
 
 type Record struct {
@@ -26,9 +25,9 @@ func ParseRecord(reader *bytes.Reader) *Record {
 	binary.Read(reader, binary.BigEndian, &record.TTL)
 	binary.Read(reader, binary.BigEndian, &record.RdLength)
 	switch record.Type {
-	case query.TYPE_A:
+	case TYPE_A:
 		record.RData = readIP(reader, record.RdLength)
-	case query.TYPE_NS:
+	case TYPE_NS:
 		record.RData = decode.DecodeName(reader)
 	default:
 		record.RData = string(readData(reader, record.RdLength))
