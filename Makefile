@@ -2,10 +2,6 @@
 build:
 	go build -v ./cmd/dns-resolver
 
-.PHONY: run
-run:
-	go run ./cmd/dns-resolver
-
 .PHONY: test
 test:
 	go test -v -race -timeout 30s ./...
