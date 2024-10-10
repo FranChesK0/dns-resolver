@@ -6,7 +6,7 @@ Simple DNS resolver written in Go.
 ---
 Clone the repository
 ```bash
-git clone git@github.com:FranChesK0/dns-resolver.git
+git clone https://github.com/FranChesK0/dns-resolver.git
 ```
 
 Build app
