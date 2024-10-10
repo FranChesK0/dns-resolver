@@ -6,8 +6,11 @@ import (
 	"os"
 
 	"github.com/FranChesK0/dns-resolver/internal/client"
+	"github.com/FranChesK0/dns-resolver/internal/config"
 	"github.com/FranChesK0/dns-resolver/internal/packet"
 )
+
+var cfg *config.Config = config.NewConfig()
 
 type DNSPacket struct {
 	header      *packet.Header
@@ -30,7 +33,7 @@ func main() {
 }
 
 func resolve(domainName string, questionType uint16) string {
-	nameServer := "77.240.157.30"
+	nameServer := cfg.NameServer
 	for {
 		fmt.Printf("querying %s for %s\n", nameServer, domainName)
 		dnsResponse := sendQuery(nameServer, domainName, questionType)
