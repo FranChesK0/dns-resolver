@@ -3,6 +3,8 @@ package query
 import (
 	"bytes"
 	"encoding/binary"
+
+	"github.com/FranChesK0/dns-resolver/internal/record"
 )
 
 const (
@@ -31,6 +33,14 @@ func (q *Question) ToBytes() []byte {
 	binary.Write(encodedQuestion, binary.BigEndian, q.QType)
 	binary.Write(encodedQuestion, binary.BigEndian, q.QClass)
 	return encodedQuestion.Bytes()
+}
+
+func ParseQuestion(reader *bytes.Reader) *Question {
+	var question Question
+	question.QName = []byte(record.DecodeName(reader))
+	binary.Read(reader, binary.BigEndian, &question.QType)
+	binary.Read(reader, binary.BigEndian, &question.QClass)
+	return &question
 }
 
 func encodeDnsName(qName []byte) []byte {
