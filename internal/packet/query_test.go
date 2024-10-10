@@ -1,4 +1,4 @@
-package query
+package packet
 
 import (
 	"encoding/hex"
